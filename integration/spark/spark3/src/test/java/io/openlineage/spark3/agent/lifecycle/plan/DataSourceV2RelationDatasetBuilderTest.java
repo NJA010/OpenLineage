@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.openlineage.client.OpenLineage;
+import io.openlineage.client.dataset.DatasetFacetsBuilder;
 import io.openlineage.spark.agent.Versions;
 import io.openlineage.spark.agent.lifecycle.SparkOpenLineageExtensionVisitorWrapper;
 import io.openlineage.spark.api.AbstractQueryPlanDatasetBuilder;
@@ -73,11 +74,9 @@ class DataSourceV2RelationDatasetBuilderTest {
       OpenLineageContext context,
       DatasetFactory factory,
       OpenLineage openLineage) {
-    OpenLineage.DatasetFacetsBuilder datasetFacetsBuilder =
-        mock(OpenLineage.DatasetFacetsBuilder.class);
+    DatasetFacetsBuilder datasetFacetsBuilder = mock(DatasetFacetsBuilder.class);
     List<OpenLineage.InputDataset> datasets = mock(List.class);
 
-    when(openLineage.newDatasetFacetsBuilder()).thenReturn(datasetFacetsBuilder);
     when(context.getOpenLineage()).thenReturn(openLineage);
     when(context.getSparkExtensionVisitorWrapper())
         .thenReturn(mock(SparkOpenLineageExtensionVisitorWrapper.class));
@@ -102,7 +101,7 @@ class DataSourceV2RelationDatasetBuilderTest {
         facetUtilsMockedStatic.verify(
             () ->
                 DatasetVersionDatasetFacetUtils.includeDatasetVersion(
-                    context, datasetFacetsBuilder, relation),
+                    context, datasetFacetsBuilder.getFacets(), relation),
             times(1));
       }
     }

@@ -5,6 +5,7 @@
 
 package io.openlineage.spark3.agent.lifecycle.plan;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
@@ -83,8 +84,7 @@ class DataSourceV2ScanRelationOnEndInputDatasetBuilderTest {
         mockStatic(DataSourceV2RelationDatasetExtractor.class)) {
       try (MockedStatic<DatasetVersionDatasetFacetUtils> facetUtilsMockedStatic =
           mockStatic(DatasetVersionDatasetFacetUtils.class)) {
-        when(DataSourceV2RelationDatasetExtractor.extract(
-                factory, context, relation, datasetFacetsBuilder))
+        when(DataSourceV2RelationDatasetExtractor.extract(factory, context, relation, any()))
             .thenReturn(datasets);
 
         Assertions.assertThat(builder.apply(scanRelation)).isEqualTo(datasets);

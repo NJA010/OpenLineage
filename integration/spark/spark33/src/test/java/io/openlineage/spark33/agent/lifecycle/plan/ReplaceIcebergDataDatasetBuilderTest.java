@@ -75,7 +75,6 @@ class ReplaceIcebergDataDatasetBuilderTest {
     OpenLineage.OutputDataset expectedDataset = mock(OpenLineage.OutputDataset.class);
     OpenLineage.DatasetFacetsBuilder datasetFacetsBuilder =
         mock(OpenLineage.DatasetFacetsBuilder.class);
-    when(openLineage.newDatasetFacetsBuilder()).thenReturn(datasetFacetsBuilder);
 
     when(plan.table()).thenReturn(table);
     try (MockedStatic mocked = mockStatic(DataSourceV2RelationDatasetExtractor.class)) {
@@ -85,10 +84,7 @@ class ReplaceIcebergDataDatasetBuilderTest {
             .thenReturn(Optional.of("v2"));
 
         when(DataSourceV2RelationDatasetExtractor.extract(
-                any(DatasetFactory.class),
-                eq(openLineageContext),
-                eq(table),
-                eq(datasetFacetsBuilder)))
+                any(DatasetFactory.class), eq(openLineageContext), eq(table), any()))
             .thenReturn(Arrays.asList(expectedDataset));
 
         List<OpenLineage.OutputDataset> datasets = builder.apply(event, plan);

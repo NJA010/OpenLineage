@@ -15,6 +15,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import io.openlineage.client.OpenLineage;
+import io.openlineage.client.dataset.DatasetFacetsBuilder;
 import io.openlineage.spark.api.OpenLineageContext;
 import io.openlineage.spark3.agent.lifecycle.plan.catalog.CatalogUtils3;
 import io.openlineage.spark3.agent.utils.DataSourceV2RelationDatasetExtractor;
@@ -140,8 +141,7 @@ class TableContentChangeDatasetBuilderTest {
     try (MockedStatic mockedPlanUtils3 = mockStatic(DataSourceV2RelationDatasetExtractor.class)) {
       try (MockedStatic mockedVersions = mockStatic(CatalogUtils3.class)) {
         OpenLineage.Dataset dataset = mock(OpenLineage.OutputDataset.class);
-        OpenLineage.DatasetFacetsBuilder datasetFacetsBuilder =
-            mock(OpenLineage.DatasetFacetsBuilder.class);
+        DatasetFacetsBuilder datasetFacetsBuilder = mock(DatasetFacetsBuilder.class);
         mock(OpenLineage.DatasetFacetsBuilder.class);
         OpenLineage.LifecycleStateChangeDatasetFacet lifecycleStateChangeDatasetFacet =
             mock(OpenLineage.LifecycleStateChangeDatasetFacet.class);
@@ -153,7 +153,6 @@ class TableContentChangeDatasetBuilderTest {
         when(dataSourceV2Relation.table()).thenReturn(table);
         when(table.properties()).thenReturn(tableProperties);
 
-        when(openLineage.newDatasetFacetsBuilder()).thenReturn(datasetFacetsBuilder);
         when(openLineage.newLifecycleStateChangeDatasetFacet(lifecycleStateChange, null))
             .thenReturn(lifecycleStateChangeDatasetFacet);
         when(openLineage.newDatasetVersionDatasetFacet("v2"))
@@ -170,10 +169,10 @@ class TableContentChangeDatasetBuilderTest {
 
         assertEquals(1, datasetList.size());
         assertEquals(dataset, datasetList.get(0));
-        Mockito.verify(datasetFacetsBuilder).version(eq(datasetVersionDatasetFacet));
+        Mockito.verify(datasetFacetsBuilder.getFacets()).version(eq(datasetVersionDatasetFacet));
 
         if (lifecycleStateChange != null) {
-          Mockito.verify(datasetFacetsBuilder)
+          Mockito.verify(datasetFacetsBuilder.getFacets())
               .lifecycleStateChange(eq(lifecycleStateChangeDatasetFacet));
         }
       }
